@@ -1,19 +1,25 @@
 package com.example.project4;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import com.example.project4.databinding.ActivityChatBinding;
 import com.example.project4.databinding.ActivityRentalBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -26,8 +32,11 @@ public class rental extends AppCompatActivity {
 
     ActivityRentalBinding binding;
     ArrayList<Map<String, String>> cat = new ArrayList<>();
+    Map<String,String> pdt;
     AppData appData = EventBus.getDefault().getStickyEvent(AppData.class);
     public CatAdapter adapter;
+   // public PdtAdapter pdtdapter;
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -42,8 +51,7 @@ public class rental extends AppCompatActivity {
         binding = ActivityRentalBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
 
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+
 
 
         db.collection("misc").document("category").addSnapshotListener(new EventListener<DocumentSnapshot>() {
@@ -60,6 +68,25 @@ public class rental extends AppCompatActivity {
                     }
                 });
 
+        db.collection("products")
+                .whereEqualTo("cat", "Accessories")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                               // pdt = document.getData().get("")
+                                ProductRecyclerView();
+                            }
+                        } else {
+
+                        }
+                    }
+                });
+
+
+
 
     }
 
@@ -70,4 +97,13 @@ public class rental extends AppCompatActivity {
 
 
     }
+    private void ProductRecyclerView() {
+
+        //pdtdapter = new CatAdapter(this, pdt);
+        //binding.horiz.setAdapter(pdtdapter);
+
+
+    }
+
+
 }
