@@ -67,9 +67,7 @@ public class rental extends AppCompatActivity {
 
         adapter = new CatAdapter(this, cat);
         binding.horiz.setAdapter(adapter);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-       // layoutManager.setStackFromEnd(true);
-        binding.horiz.setLayoutManager(layoutManager);
+
 
     }
 }
