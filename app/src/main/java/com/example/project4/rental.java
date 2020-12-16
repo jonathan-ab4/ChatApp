@@ -35,7 +35,7 @@ public class rental extends AppCompatActivity {
     ActivityRentalBinding binding;
     ArrayList<Map<String, String>> cat = new ArrayList<>();
 
-//    AppData appData = EventBus.getDefault().getStickyEvent(AppData.class);
+    //    AppData appData = EventBus.getDefault().getStickyEvent(AppData.class);
     public CatAdapter adapter;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -54,15 +54,36 @@ public class rental extends AppCompatActivity {
                 if (task.isSuccessful()) {
 
                     cat = (ArrayList<Map<String, String>>) task.getResult().getData().get("categories");
-                    CatRecyclerView();
+                    //CatRecyclerView();
 
                 }
 
 
-
-
             }
         });
+
+        db.collection("products")
+                .whereEqualTo("cat", "Cameras")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                pdt = (Map<String, String>) document.getData().get("");
+                            Log.v("abcd",String.valueOf(task.getResult().size()));
+
+                           binding.verti.setAdapter(new PdtAdapter(rental.this, task.getResult().getDocuments(),binding.verti));
+//                            }
+                        }
+                        else {
+
+
+
+                        }
+                    }
+                });
+
 
 
 //
@@ -81,37 +102,29 @@ public class rental extends AppCompatActivity {
 //                    }
 //                });
 
-        db.collection("products")
-                .whereEqualTo("cat", "Accessories")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                pdt = (Map<String, String>) document.getData().get("");
-                                Log.v("abcd",String.valueOf(task.getResult().size()));
-                                binding.verti.setAdapter(new PdtAdapter(rental.this, task.getResult().getDocuments()));
-//                            }
-                        }
-                        else {
-
-                            Toast.makeText(rental.this, "Load Failed", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }
-                });
-
-    }
-
-    private void CatRecyclerView() {
-
-        //adapter = new CatAdapter(this, cat);
-        //binding.horiz.setAdapter(adapter);
+//        db.collection("products")
+//                .whereEqualTo("cat", cat.get())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+////                            for (QueryDocumentSnapshot document : task.getResult()) {
+////                                pdt = (Map<String, String>) document.getData().get("");
+//                                Log.v("abcd",String.valueOf(task.getResult().size()));
+//                                binding.verti.setAdapter(new PdtAdapter(rental.this, task.getResult().getDocuments()));
+////                            }
+//                        }
+//                        else {
+//
+//                            Toast.makeText(rental.this, "Load Failed", Toast.LENGTH_SHORT).show();
+//
+//                        }
+//                    }
+//                });
+//
+//    }
 
 
     }
-
-
-
 }
