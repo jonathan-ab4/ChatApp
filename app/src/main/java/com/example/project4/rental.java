@@ -36,7 +36,7 @@ public class rental extends AppCompatActivity {
     Map<String,String> pdt;
     AppData appData = EventBus.getDefault().getStickyEvent(AppData.class);
     public CatAdapter adapter;
-   // public PdtAdapter pdtdapter;
+    public PdtAdapter pdtdapter;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseStorage storage;
@@ -100,8 +100,8 @@ public class rental extends AppCompatActivity {
     }
     private void ProductRecyclerView() {
 
-        //pdtdapter = new CatAdapter(this, pdt);
-        //binding.horiz.setAdapter(pdtdapter);
+        pdtdapter = new PdtAdapter(this, pdt);
+        binding.horiz.setAdapter(pdtdapter);
 
 
     }
