@@ -50,16 +50,6 @@
         app:layout_constraintTop_toBottomOf="@+id/profilename" />
 
     <Button
-        android:id="@+id/chat_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="Go to chat"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileemail" />
-
-    <Button
         android:id="@+id/rent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,5 +57,5 @@
         android:text="Go to rent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chat_button" />
+        app:layout_constraintTop_toBottomOf="@+id/profileemail" />
 </androidx.constraintlayout.widget.ConstraintLayout>

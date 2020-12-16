@@ -126,7 +126,7 @@ public class Act_rent extends AppCompatActivity {
 
                 } else {
 
-                    holder.pbinding.horiz.setVisibility(View.GONE);
+                    //holder.pbinding.horiz.setVisibility(View.GONE);
                     holder.pbinding.pdtname.setText(String.valueOf(docs.get(position - 1).getData().get("name")));
                     holder.pbinding.pdtprice.setText(String.valueOf(docs.get(position - 1).getData().get("price")));
                     Glide.with(Act_rent.this).load(docs.get(position - 1).getData().get("image")).into(holder.pbinding.pdtimg);
@@ -139,7 +139,7 @@ public class Act_rent extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                return docs.size() + 1;
+                return docs.size()+1;
             }
         };
 
