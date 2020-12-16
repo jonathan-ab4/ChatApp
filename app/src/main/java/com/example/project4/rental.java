@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 import com.example.project4.databinding.ActivityChatBinding;
 import com.example.project4.databinding.ActivityRentalBinding;
@@ -33,17 +34,11 @@ public class rental extends AppCompatActivity {
 
     ActivityRentalBinding binding;
     ArrayList<Map<String, String>> cat = new ArrayList<>();
-    Map<String,String> pdt;
-    AppData appData = EventBus.getDefault().getStickyEvent(AppData.class);
+
+//    AppData appData = EventBus.getDefault().getStickyEvent(AppData.class);
     public CatAdapter adapter;
-    public PdtAdapter pdtdapter;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    FirebaseStorage storage;
-    StorageReference storageReference;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,22 +47,39 @@ public class rental extends AppCompatActivity {
         binding = ActivityRentalBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
 
+        db.collection("misc").document("category").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    cat = (ArrayList<Map<String, String>>) task.getResult().getData().get("categories");
+                    CatRecyclerView();
+
+                }
 
 
 
-        db.collection("misc").document("category").addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
-                        if (value.exists()) {
+            }
+        });
 
-                            cat = (ArrayList<Map<String, String>>) value.getData().get("categories");
-                            CatRecyclerView();
 
-                        }
-
-                    }
-                });
+//
+//
+//        db.collection("misc").document("category").addSnapshotListener(new EventListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//
+//                        if (value.exists()) {
+//
+//                            cat = (ArrayList<Map<String, String>>) value.getData().get("categories");
+//                            CatRecyclerView();
+//
+//                        }
+//
+//                    }
+//                });
 
         db.collection("products")
                 .whereEqualTo("cat", "Accessories")
@@ -76,35 +88,30 @@ public class rental extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                               // pdt = document.getData().get("")
-                                ProductRecyclerView();
-                            }
-                        } else {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                pdt = (Map<String, String>) document.getData().get("");
+                                Log.v("abcd",String.valueOf(task.getResult().size()));
+                                binding.verti.setAdapter(new PdtAdapter(rental.this, task.getResult().getDocuments()));
+//                            }
+                        }
+                        else {
+
+                            Toast.makeText(rental.this, "Load Failed", Toast.LENGTH_SHORT).show();
 
                         }
                     }
                 });
 
-
-
-
     }
 
     private void CatRecyclerView() {
 
-        adapter = new CatAdapter(this, cat);
-        binding.horiz.setAdapter(adapter);
+        //adapter = new CatAdapter(this, cat);
+        //binding.horiz.setAdapter(adapter);
 
 
     }
-    private void ProductRecyclerView() {
 
-        pdtdapter = new PdtAdapter(this, pdt);
-        binding.horiz.setAdapter(pdtdapter);
-
-
-    }
 
 
 }

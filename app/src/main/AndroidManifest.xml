@@ -16,12 +16,6 @@
         android:theme="@style/Theme.Design.NoActionBar">
 
 
-        <!--
-               Set to true if your app is Standalone, that is, it does not require the handheld
-               app to run.
-        -->
-
-
         <activity android:name=".Chat">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -53,7 +47,7 @@
         </activity>
         <activity android:name=".SignedInScreen" />
 
-        <activity android:name=".rental"/>
+        <activity android:name=".rental" />
         <activity android:name=".Login" />
 
         <service
