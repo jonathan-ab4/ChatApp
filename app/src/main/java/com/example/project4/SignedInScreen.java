@@ -80,6 +80,16 @@ public class SignedInScreen extends AppCompatActivity {
                 }
             });
 
+            binding.rent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent i = new Intent(SignedInScreen.this, rental.class);
+                    startActivity(i);
+
+                }
+            });
+
 
         }
 
