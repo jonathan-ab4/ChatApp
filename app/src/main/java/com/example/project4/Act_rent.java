@@ -30,13 +30,10 @@ import java.util.Map;
 public class Act_rent extends AppCompatActivity {
 
     RecyclerView.Adapter<ViewHolder> Padapter;
-
     RecyclerView.Adapter<CatViewHolder> Cat_adapter;
-
     ActivityRentBinding binding;
-
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    List<DocumentSnapshot> docs = new ArrayList<>();
+    List<DocumentSnapshot> pdt_list = new ArrayList<>();
     ArrayList<Map<String, String>> cat = new ArrayList<>();
 
 
@@ -87,7 +84,7 @@ public class Act_rent extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         if (task.isSuccessful()) {
 
-                                            docs = task.getResult().getDocuments();
+                                            pdt_list = task.getResult().getDocuments();
 
                                             binding.rv.setAdapter(Padapter);
 
@@ -123,13 +120,14 @@ public class Act_rent extends AppCompatActivity {
                     holder.pbinding.horiz.setVisibility(View.VISIBLE);
                     holder.pbinding.horiz.setAdapter(Cat_adapter);
 
+                }
 
-                } else {
+                else {
 
                     //holder.pbinding.horiz.setVisibility(View.GONE);
-                    holder.pbinding.pdtname.setText(String.valueOf(docs.get(position - 1).getData().get("name")));
-                    holder.pbinding.pdtprice.setText(String.valueOf(docs.get(position - 1).getData().get("price")));
-                    Glide.with(Act_rent.this).load(docs.get(position - 1).getData().get("image")).into(holder.pbinding.pdtimg);
+                    holder.pbinding.pdtname.setText(String.valueOf(pdt_list.get(position - 1).getData().get("name")));
+                    holder.pbinding.pdtprice.setText(String.valueOf(pdt_list.get(position - 1).getData().get("price")));
+                    Glide.with(Act_rent.this).load(pdt_list.get(position - 1).getData().get("image")).into(holder.pbinding.pdtimg);
 
 
                 }
@@ -139,7 +137,7 @@ public class Act_rent extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                return docs.size()+1;
+                return pdt_list.size() + 1;
             }
         };
 
@@ -153,7 +151,7 @@ public class Act_rent extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if (task.isSuccessful()) {
-                    docs = task.getResult().getDocuments();
+                    pdt_list = task.getResult().getDocuments();
                     Padapter.notifyDataSetChanged();
                 }
 
@@ -166,7 +164,6 @@ public class Act_rent extends AppCompatActivity {
     public class CatViewHolder extends RecyclerView.ViewHolder {
 
         CatRecyclerviewBinding cbinding;
-
 
         public CatViewHolder(CatRecyclerviewBinding cbinding) {
             super(cbinding.getRoot());
