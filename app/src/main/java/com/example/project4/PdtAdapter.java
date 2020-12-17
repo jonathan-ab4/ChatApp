@@ -28,13 +28,18 @@ public class PdtAdapter extends RecyclerView.Adapter<PdtAdapter.ViewHolder> {
 
     Context context;
 
+    RecyclerView rv1;
+
 
 
     List<DocumentSnapshot> querySnaps;
 
-    public PdtAdapter(Context context, List<DocumentSnapshot> queryDocumentSnapshots) {
+
+
+    public PdtAdapter(Context context, List<DocumentSnapshot> queryDocumentSnapshots,RecyclerView rv1) {
         this.context = context;
         this.querySnaps = queryDocumentSnapshots;
+        this.rv1=rv1;
     }
 
     @NonNull
@@ -47,13 +52,10 @@ public class PdtAdapter extends RecyclerView.Adapter<PdtAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
 
-
         if(position==0)
         {
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
 
             db.collection("misc").document("category").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -62,14 +64,11 @@ public class PdtAdapter extends RecyclerView.Adapter<PdtAdapter.ViewHolder> {
                     if (task.isSuccessful()) {
 
                         cat = (ArrayList<Map<String, String>>) task.getResult().getData().get("categories");
-                        CatAdapter ad = new CatAdapter(context,cat);
+                        CatAdapter ad = new CatAdapter(context,cat,rv1);
                         holder.binding.horiz.setVisibility(View.VISIBLE);
                         holder.binding.horiz.setAdapter(ad);
 
-
                     }
-
-
                 }
             });
 
@@ -82,11 +81,9 @@ public class PdtAdapter extends RecyclerView.Adapter<PdtAdapter.ViewHolder> {
         else {
 
             holder.binding.horiz.setVisibility(View.GONE);
-
-
-            holder.binding.pdtname.setText((CharSequence) querySnaps.get(position).get("name"));
-            holder.binding.pdtprice.setText((CharSequence) querySnaps.get(position).get("price"));
-            Glide.with(context).load(querySnaps.get(position).get("image")).into(holder.binding.pdtimg);
+            holder.binding.pdtname.setText((CharSequence) querySnaps.get(position-1).get("name"));
+            holder.binding.pdtprice.setText((CharSequence) querySnaps.get(position-1).get("price"));
+            Glide.with(context).load(querySnaps.get(position-1).get("image")).into(holder.binding.pdtimg);
 
         }
 
@@ -95,7 +92,7 @@ public class PdtAdapter extends RecyclerView.Adapter<PdtAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return querySnaps.size();
+        return querySnaps.size()+1;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
