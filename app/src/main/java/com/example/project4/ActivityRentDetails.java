@@ -151,11 +151,10 @@ public class ActivityRentDetails  extends AppCompatActivity {
                 {
 
                     Map<String,String> myproduct = new HashMap<>();
-
                     myproduct.put("name",item_name);
                     myproduct.put("price",item_price);
                     myproduct.put("image",item_img);
-                    myproduct.put("status",Integer.toString(1));
+                    myproduct.put("status",Integer.toString(0));
 
 
 
@@ -190,8 +189,6 @@ public class ActivityRentDetails  extends AppCompatActivity {
 
 
 
-
-
                             } else {
 
                                 db.collection("cart").document(user.getUid()).set(myproduct)
@@ -201,6 +198,26 @@ public class ActivityRentDetails  extends AppCompatActivity {
 
                                                 if(task.isSuccessful())
                                                 {
+//                                                    db.collection("cart").document(mAuth.getCurrentUser().getUid()).update("myproduct", FieldValue.arrayUnion(myproduct))
+//                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                                @Override
+//                                                                public void onComplete(@NonNull Task<Void> task) {
+//
+//                                                                    if(task.isSuccessful())
+//                                                                    {
+//
+//                                                                        Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
+//                                                                        intent.putExtra("cart_flag",1);
+//                                                                        startActivity(intent);
+//                                                                        finish();
+//
+//                                                                    }
+//
+//                                                                    else
+//                                                                        Toast.makeText(ActivityRentDetails.this, "Failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//
+//                                                                }
+//                                                            });
 
                                                     Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
                                                     intent.putExtra("cart_flag",1);
