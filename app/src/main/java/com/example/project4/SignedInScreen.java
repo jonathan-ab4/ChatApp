@@ -41,11 +41,6 @@ public class SignedInScreen extends AppCompatActivity {
         binding = ActivitySignedInScreenBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
 
-        alarmMgr = (AlarmManager) getSystemService(this.ALARM_SERVICE);
-        Intent intent = new Intent(this, SampleService.class);
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()+1000 * 5, alarmIntent);
-
         FirebaseUser current = mAuth.getCurrentUser();
 
         if (current != null) {
@@ -70,21 +65,13 @@ public class SignedInScreen extends AppCompatActivity {
                         }
                     });
 
-            binding.chatButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-                    Intent i = new Intent(SignedInScreen.this, Chat.class);
-                    startActivity(i);
-
-                }
-            });
 
             binding.rent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    Intent i = new Intent(SignedInScreen.this, rental.class);
+                    Intent i = new Intent(SignedInScreen.this, Act_rent.class);
                     startActivity(i);
 
                 }

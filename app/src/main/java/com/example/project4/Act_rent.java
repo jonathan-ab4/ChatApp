@@ -8,15 +8,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
+import com.example.project4.databinding.ActivityRentBinding;
 import com.example.project4.databinding.CatRecyclerviewBinding;
 import com.example.project4.databinding.PdtRecyclerviewBinding;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.project4.databinding.ActivityTestBinding;
+import com.example.project4.databinding.ActivityRentBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,26 +27,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class test extends AppCompatActivity {
+public class Act_rent extends AppCompatActivity {
 
     RecyclerView.Adapter<ViewHolder> Padapter;
-
-    RecyclerView.Adapter<CatViewHolder> Cadapter;
-
-    ActivityTestBinding binding;
-
+    RecyclerView.Adapter<CatViewHolder> Cat_adapter;
+    ActivityRentBinding binding;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    List<DocumentSnapshot> docs = new ArrayList<>();
+    List<DocumentSnapshot> pdt_list = new ArrayList<>();
     ArrayList<Map<String, String>> cat = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityTestBinding.inflate(LayoutInflater.from(this));
+        binding = ActivityRentBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
 
+        db.collection("misc").document("category").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-        Cadapter = new RecyclerView.Adapter<CatViewHolder>() {
+                if (task.isSuccessful()) {
+
+                    cat = (ArrayList<Map<String, String>>) task.getResult().getData().get("categories");
+                    Cat_adapter.notifyDataSetChanged();
+
+
+                }
+            }
+        });
+
+
+        Cat_adapter = new RecyclerView.Adapter<CatViewHolder>() {
 
             @NonNull
             @Override
@@ -58,7 +70,7 @@ public class test extends AppCompatActivity {
             public void onBindViewHolder(@NonNull CatViewHolder holder, int position) {
 
                 holder.cbinding.catname.setText(cat.get(position).get("cat"));
-                Glide.with(test.this).load(cat.get(position).get("image")).into(holder.cbinding.catimg);
+                Glide.with(Act_rent.this).load(cat.get(position).get("image")).into(holder.cbinding.catimg);
 
                 holder.cbinding.catimg.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -72,17 +84,14 @@ public class test extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                         if (task.isSuccessful()) {
 
+                                            pdt_list = task.getResult().getDocuments();
 
-
+                                            binding.rv.setAdapter(Padapter);
 
                                         }
-
                                     }
 
                                 });
-
-
-
                     }
                 });
 
@@ -107,35 +116,18 @@ public class test extends AppCompatActivity {
             public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
                 if (position == 0) {
-                    db.collection("misc").document("category").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                            if (task.isSuccessful()) {
-
-                                cat = (ArrayList<Map<String, String>>) task.getResult().getData().get("categories");
-
-                                //Cadapter
-
-                                holder.binding.horiz.setVisibility(View.VISIBLE);
-                                //holder.binding.horiz.setAdapter(ad);
-
-                            }
-                        }
-                    });
-
+                    holder.pbinding.horiz.setVisibility(View.VISIBLE);
+                    holder.pbinding.horiz.setAdapter(Cat_adapter);
 
                 }
 
-                else
+                else {
 
-                {
-
-                    holder.binding.horiz.setVisibility(View.GONE);
-                    holder.binding.pdtname.setText(String.valueOf(docs.get(position-1).getData().get("name")));
-                    holder.binding.pdtprice.setText(String.valueOf(docs.get(position).getData().get("price")));
-                    Glide.with(test.this).load(docs.get(position).getData().get("image")).into(holder.binding.pdtimg);
-
+                    //holder.pbinding.horiz.setVisibility(View.GONE);
+                    holder.pbinding.pdtname.setText(String.valueOf(pdt_list.get(position - 1).getData().get("name")));
+                    holder.pbinding.pdtprice.setText(String.valueOf(pdt_list.get(position - 1).getData().get("price")));
+                    Glide.with(Act_rent.this).load(pdt_list.get(position - 1).getData().get("image")).into(holder.pbinding.pdtimg);
 
 
                 }
@@ -145,7 +137,7 @@ public class test extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                return docs.size();
+                return pdt_list.size() + 1;
             }
         };
 
@@ -159,7 +151,7 @@ public class test extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if (task.isSuccessful()) {
-                    docs = task.getResult().getDocuments();
+                    pdt_list = task.getResult().getDocuments();
                     Padapter.notifyDataSetChanged();
                 }
 
@@ -173,7 +165,6 @@ public class test extends AppCompatActivity {
 
         CatRecyclerviewBinding cbinding;
 
-
         public CatViewHolder(CatRecyclerviewBinding cbinding) {
             super(cbinding.getRoot());
             this.cbinding = cbinding;
@@ -184,11 +175,11 @@ public class test extends AppCompatActivity {
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        com.example.project4.databinding.PdtRecyclerviewBinding binding;
+        com.example.project4.databinding.PdtRecyclerviewBinding pbinding;
 
-        public ViewHolder(com.example.project4.databinding.PdtRecyclerviewBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+        public ViewHolder(com.example.project4.databinding.PdtRecyclerviewBinding pbinding) {
+            super(pbinding.getRoot());
+            this.pbinding = pbinding;
         }
     }
 }
