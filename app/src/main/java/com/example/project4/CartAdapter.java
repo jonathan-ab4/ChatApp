@@ -1,6 +1,7 @@
 package com.example.project4;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+        if(myproduct.get(position).get("status").equals("0"))
+        {
+           holder.binding.cartRecycle.setBackgroundColor(Color.parseColor("#FFE68989"));
+        }
+        else{
+            holder.binding.cartRecycle.setBackgroundColor(Color.parseColor("#FF96E499"));
+
+        }
         holder.binding.pdtname.setText(myproduct.get(position).get("name"));
         holder.binding.pdtprice.setText(myproduct.get(position).get("price"));
         Glide.with(context).load(myproduct.get(position).get("image")).into(holder.binding.pdtimg);
