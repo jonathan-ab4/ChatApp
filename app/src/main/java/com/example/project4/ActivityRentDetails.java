@@ -27,6 +27,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,8 @@ import java.util.Map;
 public class ActivityRentDetails  extends AppCompatActivity {
 
     ActivityRentDetailsBinding binding;
+
+    ArrayList<Map<String,String>> myproducts = new ArrayList<>();
 
     String item_name,item_price,item_img,item_desc;
     int st_date,en_date;
@@ -155,7 +158,6 @@ public class ActivityRentDetails  extends AppCompatActivity {
                     myproduct.put("price",item_price);
                     myproduct.put("image",item_img);
                     myproduct.put("status",Integer.toString(0));
-
 
 
                     db.collection("cart").document(user.getUid()).get()
