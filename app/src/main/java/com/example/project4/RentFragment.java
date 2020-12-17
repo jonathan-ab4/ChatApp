@@ -151,7 +151,7 @@ public class RentFragment extends Fragment {
                             itemIntent.putExtra("item_img",img_url);
                             itemIntent.putExtra("item_desc",item_desc);
                             startActivity(itemIntent);
-
+                            getActivity().finish();
 
 
 
