@@ -21,14 +21,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -46,11 +49,19 @@ public class Login extends AppCompatActivity {
 
     Map<String, Object> users = new HashMap<>();
 
+    Map<String, ArrayList<Map<String, String>>> myproduct = new HashMap<>();
+
+
+    DocumentSnapshot user_check;
+
     private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        myproduct.put("myproducts", new ArrayList<Map<String, String>>());
+
 
         binding = ActivityLoginBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
@@ -116,12 +127,10 @@ public class Login extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-
+                        if (task.isSuccessful())
+                        {
 
                             Log.d("TAG1", "signInWithCredential:success");
-
-
                             Toast.makeText(Login.this, "Signed in successfully", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
 
@@ -131,34 +140,51 @@ public class Login extends AppCompatActivity {
                                 users.put("profile_url", Objects.requireNonNull(user.getPhotoUrl()).toString());
 
 
-                                db.collection("users").document(mAuth.getCurrentUser().getUid()).set(users)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
+                                db.collection("users").document(user.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(Login.this, "User Saved", Toast.LENGTH_SHORT).show();
+                                        if (documentSnapshot.exists()) {
 
-                                                    Intent i = new Intent(Login.this, SignedInScreen.class);
-                                                    startActivity(i);
-                                                    finish();
+                                            user_check = documentSnapshot;
+                                        }
+                                        else
+                                        {
 
-                                                } else {
-                                                    Toast.makeText(Login.this, "Couldnt Save!", Toast.LENGTH_SHORT).show();
+                                            db.collection("users").document(mAuth.getCurrentUser().getUid()).set(users)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
 
-                                                }
-
-                                            }
-                                        });
-
+                                                            if (task.isSuccessful()) {
+                                                                Toast.makeText(Login.this, "User Saved", Toast.LENGTH_SHORT).show();
 
 
+                                                                db.collection("cart").document(mAuth.getCurrentUser().getUid()).set(myproduct);
+
+                                                                Intent i = new Intent(Login.this, SignedInScreen.class);
+                                                                startActivity(i);
+                                                                finish();
+
+                                                            } else {
+                                                                Toast.makeText(Login.this, "Couldnt Save!", Toast.LENGTH_SHORT).show();
+
+                                                            }
+
+                                                        }
+                                                    });
+
+                                        }
+
+                                    }
+                                });
 
 
                             }
 
 
-                        } else {
+                        }
+                        else {
 
                             Toast.makeText(Login.this, "Sign in failed! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             Log.d("Login:", task.getException().getMessage());

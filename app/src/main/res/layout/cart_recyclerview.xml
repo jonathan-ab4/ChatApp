@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/white_ripple"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent">
+    app:layout_constraintStart_toStartOf="parent"
+    android:layout_marginBottom="1dp">
 
     <ImageView
         android:id="@+id/pdtimg"
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:textColor="#000"
-        android:textSize="12sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/pdtimg"
         app:layout_constraintTop_toTopOf="@+id/pdtimg" />
 
@@ -38,7 +39,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="60dp"
         android:textColor="#000"
-        android:textSize="12sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/pdtimg"
         app:layout_constraintStart_toEndOf="@+id/pdtimg"

@@ -41,9 +41,6 @@ public class RentFragment extends Fragment {
 
         binding = FragmentRentBinding.inflate(inflater,container,false);
 
-
-
-
         db.collection("misc").document("category").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -52,7 +49,6 @@ public class RentFragment extends Fragment {
 
                     cat = (ArrayList<Map<String, String>>) task.getResult().getData().get("categories");
                     Cat_adapter.notifyDataSetChanged();
-
 
                 }
             }
@@ -145,7 +141,6 @@ public class RentFragment extends Fragment {
 
 
                             Intent itemIntent = new Intent(getContext(),ActivityRentDetails.class);
-
                             itemIntent.putExtra("item_name", item_name);
                             itemIntent.putExtra("item_price", item_price);
                             itemIntent.putExtra("item_img",img_url);
@@ -200,12 +195,11 @@ public class RentFragment extends Fragment {
             super(cbinding.getRoot());
             this.cbinding = cbinding;
         }
-
-
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+
         com.example.project4.databinding.PdtRecyclerviewBinding pbinding;
 
         public ViewHolder(com.example.project4.databinding.PdtRecyclerviewBinding pbinding) {
