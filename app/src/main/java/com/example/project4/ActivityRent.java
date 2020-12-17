@@ -85,9 +85,9 @@ public class ActivityRent extends AppCompatActivity {
                     case R.id.page_2:
                         selectedFragment = new CartFragment();
                         break;
-//                    case R.id.page_3:
-//                        selectedFragment = new AcademyFragment();
-//                        break;
+                     case R.id.page_3:
+                        selectedFragment = new AcademyFragment();
+                        break;
 //
 //                    case R.id.page_4:
 //                        selectedFragment = new ProfileFragment();
