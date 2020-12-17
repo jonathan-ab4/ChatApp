@@ -9,6 +9,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -17,9 +18,19 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.project4.databinding.ActivityRentDetailsBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActivityRentDetails  extends AppCompatActivity {
 
@@ -33,6 +44,10 @@ public class ActivityRentDetails  extends AppCompatActivity {
     int month;
     int dayOfMonth;
     Calendar calendar;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
 
     @Override
     public void onBackPressed() {
@@ -132,11 +147,85 @@ public class ActivityRentDetails  extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
-                intent.putExtra("cart_flag",1);
-                startActivity(intent);
-                finish();
+                if(user!=null)
+                {
 
+                    Map<String,String> myproduct = new HashMap<>();
+
+                    myproduct.put("name",item_name);
+                    myproduct.put("price",item_price);
+                    myproduct.put("image",item_img);
+                    myproduct.put("status",Integer.toString(1));
+
+
+
+                    db.collection("cart").document(user.getUid()).get()
+                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            if (documentSnapshot.exists()) {
+
+
+                    db.collection("cart").document(mAuth.getCurrentUser().getUid()).update("myproduct", FieldValue.arrayUnion(myproduct))
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    if(task.isSuccessful())
+                                    {
+
+                                        Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
+                                        intent.putExtra("cart_flag",1);
+                                        startActivity(intent);
+                                        finish();
+
+                                    }
+
+                                    else
+                                        Toast.makeText(ActivityRentDetails.this, "Failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+
+
+
+
+                            } else {
+
+                                db.collection("cart").document(user.getUid()).set(myproduct)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+
+                                                if(task.isSuccessful())
+                                                {
+
+                                                    Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
+                                                    intent.putExtra("cart_flag",1);
+                                                    startActivity(intent);
+                                                    finish();
+
+                                                }
+
+                                                else
+                                                    Toast.makeText(ActivityRentDetails.this, "Failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+
+                                            }
+
+                                        });
+
+
+
+                            }
+                        }
+                    });
+
+
+
+
+                }
 
             }
         });
