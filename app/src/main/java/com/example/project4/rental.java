@@ -81,6 +81,7 @@ public class rental extends AppCompatActivity {
 //                    }
 //                });
 
+
         db.collection("products")
                 .whereEqualTo("cat", "Accessories")
                 .get()
