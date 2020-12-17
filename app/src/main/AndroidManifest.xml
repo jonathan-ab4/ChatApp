@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar">
 
-        <activity android:name=".Act_rent"/>
+        <activity android:name=".ActivityRent"/>
         <activity android:name=".Login"/>
         <activity android:name=".SignedInScreen"/>
         <activity android:name=".SplashScreen">
@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ActivityRentDetails"/>
 
 
     </application>

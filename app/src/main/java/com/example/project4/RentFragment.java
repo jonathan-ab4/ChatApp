@@ -1,22 +1,19 @@
 package com.example.project4;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.Intent;
 import android.os.Bundle;
-
-import com.bumptech.glide.Glide;
-import com.example.project4.databinding.ActivityRentBinding;
-import com.example.project4.databinding.CatRecyclerviewBinding;
-import com.example.project4.databinding.PdtRecyclerviewBinding;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.project4.databinding.ActivityRentBinding;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.example.project4.databinding.CatRecyclerviewBinding;
+import com.example.project4.databinding.FragmentRentBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,21 +24,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class Act_rent extends AppCompatActivity {
+
+public class RentFragment extends Fragment {
 
     RecyclerView.Adapter<ViewHolder> Padapter;
     RecyclerView.Adapter<CatViewHolder> Cat_adapter;
-    ActivityRentBinding binding;
+    String item_name, item_price,img_url,item_desc;
+    FragmentRentBinding binding;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     List<DocumentSnapshot> pdt_list = new ArrayList<>();
     ArrayList<Map<String, String>> cat = new ArrayList<>();
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = ActivityRentBinding.inflate(LayoutInflater.from(this));
-        setContentView(binding.getRoot());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        binding = FragmentRentBinding.inflate(inflater,container,false);
+
+
+
 
         db.collection("misc").document("category").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -57,7 +58,6 @@ public class Act_rent extends AppCompatActivity {
             }
         });
 
-
         Cat_adapter = new RecyclerView.Adapter<CatViewHolder>() {
 
             @NonNull
@@ -70,7 +70,7 @@ public class Act_rent extends AppCompatActivity {
             public void onBindViewHolder(@NonNull CatViewHolder holder, int position) {
 
                 holder.cbinding.catname.setText(cat.get(position).get("cat"));
-                Glide.with(Act_rent.this).load(cat.get(position).get("image")).into(holder.cbinding.catimg);
+                Glide.with(RentFragment.this).load(cat.get(position).get("image")).into(holder.cbinding.catimg);
 
                 holder.cbinding.catimg.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -108,8 +108,8 @@ public class Act_rent extends AppCompatActivity {
         Padapter = new RecyclerView.Adapter<ViewHolder>() {
             @NonNull
             @Override
-            public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                return new ViewHolder(PdtRecyclerviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+            public RentFragment.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                return new ViewHolder(com.example.project4.databinding.PdtRecyclerviewBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
             }
 
             @Override
@@ -120,14 +120,43 @@ public class Act_rent extends AppCompatActivity {
                     holder.pbinding.horiz.setVisibility(View.VISIBLE);
                     holder.pbinding.horiz.setAdapter(Cat_adapter);
 
+                    holder.pbinding.group.setVisibility(View.GONE);
+
                 }
 
                 else {
 
+                    holder.pbinding.group.setVisibility(View.VISIBLE);
+
                     //holder.pbinding.horiz.setVisibility(View.GONE);
                     holder.pbinding.pdtname.setText(String.valueOf(pdt_list.get(position - 1).getData().get("name")));
                     holder.pbinding.pdtprice.setText(String.valueOf(pdt_list.get(position - 1).getData().get("price")));
-                    Glide.with(Act_rent.this).load(pdt_list.get(position - 1).getData().get("image")).into(holder.pbinding.pdtimg);
+                    Glide.with(RentFragment.this).load(pdt_list.get(position - 1).getData().get("image")).into(holder.pbinding.pdtimg);
+
+
+                    holder.pbinding.pdtlayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            item_name = pdt_list.get(position - 1).getData().get("name").toString();
+                            item_price = pdt_list.get(position - 1).getData().get("price").toString();
+                            img_url = pdt_list.get(position-1).getData().get("image").toString();
+                            item_desc = pdt_list.get(position-1).getData().get("desc").toString();
+
+
+                            Intent itemIntent = new Intent(getContext(),ActivityRentDetails.class);
+
+                            itemIntent.putExtra("item_name", item_name);
+                            itemIntent.putExtra("item_price", item_price);
+                            itemIntent.putExtra("item_img",img_url);
+                            itemIntent.putExtra("item_desc",item_desc);
+                            startActivity(itemIntent);
+
+
+
+
+                        }
+                    });
 
 
                 }
@@ -142,7 +171,7 @@ public class Act_rent extends AppCompatActivity {
         };
 
         binding.rv.setAdapter(Padapter);
-        binding.rv.setLayoutManager(new LinearLayoutManager(this));
+        binding.rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
         db.collection("products")
                 .whereEqualTo("cat", "Cameras")
@@ -157,6 +186,8 @@ public class Act_rent extends AppCompatActivity {
 
             }
         });
+
+        return binding.getRoot();
 
     }
 
@@ -182,4 +213,8 @@ public class Act_rent extends AppCompatActivity {
             this.pbinding = pbinding;
         }
     }
+
+
+
+
 }
