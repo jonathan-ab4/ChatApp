@@ -11,6 +11,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.example.project4.databinding.ActivityRentDetailsBinding;
@@ -30,6 +33,14 @@ public class ActivityRentDetails  extends AppCompatActivity {
     int month;
     int dayOfMonth;
     Calendar calendar;
+
+    @Override
+    public void onBackPressed() {
+
+        Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
+        startActivity(intent);
+        //super.onBackPressed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,14 +128,18 @@ public class ActivityRentDetails  extends AppCompatActivity {
             }
         });
 
+        binding.rent1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
+                intent.putExtra("cart_flag",1);
+                startActivity(intent);
+                finish();
 
 
-
-
-
-
-
-
+            }
+        });
 
     }
 }

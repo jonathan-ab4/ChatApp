@@ -35,6 +35,7 @@ public class ActivityRent extends AppCompatActivity {
 
     ActivityRentBinding binding;
     Fragment selectedFragment = new RentFragment();
+    Fragment selectedFragment1 = new CartFragment();
 
 
     @Override
@@ -45,6 +46,33 @@ public class ActivityRent extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
 
+
+        Bundle bundle = getIntent().getExtras();
+
+        if(bundle!=null)
+        {
+
+            if(bundle.getInt("cart_flag")== 1)
+            {
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment1).commit();
+                binding.botnav.setSelectedItemId(R.id.page_2);
+
+            }
+            else
+            {
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, selectedFragment).commit();
+
+
+            }
+
+        }
+
+
+
+
+
         binding.botnav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -54,9 +82,9 @@ public class ActivityRent extends AppCompatActivity {
                     case R.id.page_1:
                         selectedFragment = new RentFragment();
                         break;
-//                    case R.id.page_2:
-//                        selectedFragment = new CartFragment();
-//                        break;
+                    case R.id.page_2:
+                        selectedFragment = new CartFragment();
+                        break;
 //                    case R.id.page_3:
 //                        selectedFragment = new AcademyFragment();
 //                        break;
