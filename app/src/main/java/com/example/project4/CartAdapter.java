@@ -34,6 +34,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
+
+
         if(myproduct.get(position).get("status").equals("0"))
         {
            holder.binding.cartRecycle.setBackgroundColor(Color.parseColor("#FFE68989"));

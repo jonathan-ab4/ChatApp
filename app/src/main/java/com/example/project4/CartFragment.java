@@ -38,6 +38,8 @@ public class CartFragment extends Fragment {
 
 
         binding = FragmentCartBinding.inflate(inflater,container,false);
+
+
         return binding.getRoot();
     }
 
