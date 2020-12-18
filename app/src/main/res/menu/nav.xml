@@ -14,8 +14,8 @@
     <item
         android:id="@+id/page_3"
         android:enabled="true"
-        android:icon="@drawable/academy"
-        android:title="@string/title_academy"/>
+        android:icon="@drawable/ic_baseline_admin_panel_settings_24"
+        android:title="Admin"/>
     <item
         android:id="@+id/page_4"
         android:enabled="true"
