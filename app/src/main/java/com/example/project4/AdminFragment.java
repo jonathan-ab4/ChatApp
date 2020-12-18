@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 
-public class AcademyFragment extends Fragment {
+public class AdminFragment extends Fragment {
 
 
     @Override
