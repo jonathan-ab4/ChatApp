@@ -155,7 +155,6 @@ public class ActivityRentDetails extends AppCompatActivity {
                 }
                 else
 
-
                 {
 
                     if (user != null) {
@@ -166,7 +165,7 @@ public class ActivityRentDetails extends AppCompatActivity {
                         myproduct.put("image", item_img);
                         myproduct.put("status", Integer.toString(0));
 
-                        db.collection("cart").document(mAuth.getCurrentUser().getUid()).update("myproducts", FieldValue.arrayUnion(myproduct))
+                        db.collection("users").document(mAuth.getCurrentUser().getUid()).update("myproducts", FieldValue.arrayUnion(myproduct))
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {

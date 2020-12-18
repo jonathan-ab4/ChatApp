@@ -1,11 +1,13 @@
 package com.example.project4;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,20 +17,28 @@ import com.example.project4.databinding.FragmentAdminBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 public class AdminFragment extends Fragment {
 
+    ArrayList<Map<String,Object>> userlist = new ArrayList<>();
     FragmentAdminBinding fbinding;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     RecyclerView.Adapter<AdminFragment.ViewHolder> adminAdapter;
     List<DocumentSnapshot> users = new ArrayList<>();
+    ArrayList<Map<String,String>> pdt = new ArrayList<>();
+    String item_name, item_price, item_img, item_desc;
+    ArrayList<Map<String,String>> pdt1 = new ArrayList<>();
+
 
 
     @Override
@@ -36,6 +46,23 @@ public class AdminFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fbinding = FragmentAdminBinding.inflate(LayoutInflater.from(getContext()),container,false);
+
+
+//        db.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+//
+//                if(value.getDocuments().)
+//
+//
+//
+//            }
+//        });
+
+
+
+
+
 
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -45,8 +72,71 @@ public class AdminFragment extends Fragment {
                 {
 
                     users = task.getResult().getDocuments();
+
+
+                    for(int i =0;i<users.size();i++)
+                    {
+                        pdt = (ArrayList<Map<String, String>>) users.get(i).getData().get("myproducts");
+                        int s = pdt.size();
+
+                        ArrayList<Map<String, String>> tempList = new ArrayList<>();
+
+                        for(int j=0;j<s;j++) {
+                            if (pdt.get(j).get("status").equals("0")) {
+
+//                                userlist.add(users.get(i).getData());
+
+                                tempList.add(pdt.get(j));
+
+                            }
+                        }
+
+                            Map<String, Object> temp = new HashMap<>();
+                            temp.put("name", users.get(i).getData().get("name"));
+                            temp.put("email", users.get(i).getData().get("email"));
+                            temp.put("myproducts", tempList);
+
+                            userlist.add(temp);
+
+
+
+
+
+                    }
+
+
                     fbinding.adminRecycler.setAdapter(adminAdapter);
                     adminAdapter.notifyDataSetChanged();
+
+
+
+
+
+//                    for(int i=0;i<users.size();i++)
+//                    {
+//
+//                        pdt = (ArrayList<Map<String, String>>) users.get(i).getData().get("myproducts");
+//
+//                        if(pdt.get(i).get("status").equals("0"))
+//                        {
+//
+//                            fbinding.adminRecycler.setAdapter(adminAdapter);
+//                            adminAdapter.notifyDataSetChanged();
+//
+//
+//                        }
+//                        else
+//                        {
+//                            pdt.remove(pdt.get(i).get("status"));
+//
+//                        }
+//
+//
+//
+//
+//
+//                    }
+
 
                 }
 
@@ -65,8 +155,8 @@ public class AdminFragment extends Fragment {
             public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
 
-                holder.binding.name.setText((CharSequence) users.get(position).getData().get("name"));
-                holder.binding.email.setText((CharSequence) users.get(position).getData().get("email"));
+                holder.binding.name.setText((CharSequence) userlist.get(position).get("name"));
+                holder.binding.email.setText((CharSequence) userlist.get(position).get("email"));
 
                 holder.binding.userlayout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -75,6 +165,12 @@ public class AdminFragment extends Fragment {
 
 
 
+                        pdt1 = (ArrayList<Map<String, String>>) userlist.get(position).get("myproducts");
+
+                        Intent appIntent = new Intent(getContext(),ActivityApproval.class);
+                        appIntent.putExtra("productlist",pdt1);
+
+                        startActivity(appIntent);
 
 
 
@@ -86,7 +182,7 @@ public class AdminFragment extends Fragment {
 
             @Override
             public int getItemCount() {
-                return users.size();
+                return userlist.size();
             }
         };
 

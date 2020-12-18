@@ -48,7 +48,7 @@ public class CartFragment extends Fragment {
         super.onStart();
 
 
-        registration = db.collection("cart").document(mAuth.getCurrentUser().getUid())
+        registration = db.collection("users").document(mAuth.getCurrentUser().getUid())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {

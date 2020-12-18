@@ -49,7 +49,7 @@ public class Login extends AppCompatActivity {
 
     Map<String, Object> users = new HashMap<>();
 
-    Map<String, ArrayList<Map<String, String>>> myproduct = new HashMap<>();
+    ArrayList<Map< String, String>> myproduct = new ArrayList<>();
 
 
     DocumentSnapshot user_check;
@@ -60,7 +60,6 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        myproduct.put("myproducts", new ArrayList<Map<String, String>>());
 
 
         binding = ActivityLoginBinding.inflate(LayoutInflater.from(this));
@@ -138,6 +137,7 @@ public class Login extends AppCompatActivity {
                                 users.put("name", user.getDisplayName());
                                 users.put("email", user.getEmail());
                                 users.put("profile_url", Objects.requireNonNull(user.getPhotoUrl()).toString());
+                                users.put("myproducts",myproduct);
 
 
                                 db.collection("users").document(user.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -158,9 +158,6 @@ public class Login extends AppCompatActivity {
 
                                                             if (task.isSuccessful()) {
                                                                 Toast.makeText(Login.this, "User Saved", Toast.LENGTH_SHORT).show();
-
-
-                                                                db.collection("cart").document(mAuth.getCurrentUser().getUid()).set(myproduct);
 
                                                                 Intent i = new Intent(Login.this, SignedInScreen.class);
                                                                 startActivity(i);
