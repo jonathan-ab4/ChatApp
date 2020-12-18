@@ -27,23 +27,28 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActivityRentDetails  extends AppCompatActivity {
+public class ActivityRentDetails extends AppCompatActivity {
 
     ActivityRentDetailsBinding binding;
 
-    String item_name,item_price,item_img,item_desc;
-    int st_date,en_date;
-    int flag=0;
+
+    String item_name, item_price, item_img, item_desc;
+    int st_date, en_date;
+    int flag = 0;
     DatePickerDialog datePickerDialog;
     int year;
     int month;
     int dayOfMonth;
     Calendar calendar;
+
+    ArrayList<Map<String,String>> allproducts = new ArrayList<>();
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -92,8 +97,7 @@ public class ActivityRentDetails  extends AppCompatActivity {
                                 st_date = day + (month + 1) + year;
 
                                 binding.end.setText(day + "/" + (month + 1) + "/" + year);
-                                if(st_date>=en_date )
-                                {
+                                if (st_date >= en_date) {
                                     binding.start.setText("End Date");
 
                                 }
@@ -102,9 +106,6 @@ public class ActivityRentDetails  extends AppCompatActivity {
                         }, year, month, dayOfMonth);
                 datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePickerDialog.show();
-
-
-
 
 
             }
@@ -125,7 +126,7 @@ public class ActivityRentDetails  extends AppCompatActivity {
 
                                 en_date = day + (month + 1) + year;
                                 if (st_date < en_date) {
-                                    flag=1;
+                                    flag = 1;
                                     binding.start.setText(day + "/" + (month + 1) + "/" + year);
                                 } else
                                     Toast.makeText(ActivityRentDetails.this, "Start Date should be earlier than End Date ", Toast.LENGTH_SHORT).show();
@@ -137,9 +138,6 @@ public class ActivityRentDetails  extends AppCompatActivity {
                 datePickerDialog.show();
 
 
-
-
-
             }
         });
 
@@ -147,88 +145,57 @@ public class ActivityRentDetails  extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(user!=null)
+                if(binding.start.getText().equals("End Date") || binding.end.getText().equals("Start Date"))
+
                 {
 
-                    Map<String,String> myproduct = new HashMap<>();
-
-                    myproduct.put("name",item_name);
-                    myproduct.put("price",item_price);
-                    myproduct.put("image",item_img);
-                    myproduct.put("status",Integer.toString(1));
+                    Toast.makeText(ActivityRentDetails.this, "Please select dates to continue", Toast.LENGTH_SHORT).show();
 
 
-
-                    db.collection("cart").document(user.getUid()).get()
-                            .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                        @Override
-                        public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-                            if (documentSnapshot.exists()) {
+                }
+                else
 
 
-                    db.collection("cart").document(mAuth.getCurrentUser().getUid()).update("myproduct", FieldValue.arrayUnion(myproduct))
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                {
 
-                                    if(task.isSuccessful())
-                                    {
+                    if (user != null) {
 
-                                        Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
-                                        intent.putExtra("cart_flag",1);
-                                        startActivity(intent);
-                                        finish();
+                        Map<String, String> myproduct = new HashMap<>();
+                        myproduct.put("name", item_name);
+                        myproduct.put("price", item_price);
+                        myproduct.put("image", item_img);
+                        myproduct.put("status", Integer.toString(0));
+
+                        db.collection("cart").document(mAuth.getCurrentUser().getUid()).update("myproducts", FieldValue.arrayUnion(myproduct))
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        if (task.isSuccessful()) {
+
+                                            Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
+                                            intent.putExtra("cart_flag", 1);
+                                            startActivity(intent);
+                                            finish();
+
+                                        } else
+                                            Toast.makeText(ActivityRentDetails.this, "Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
 
                                     }
+                                });
 
-                                    else
-                                        Toast.makeText(ActivityRentDetails.this, "Failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                                }
-                            });
-
-
-
-
-
-                            } else {
-
-                                db.collection("cart").document(user.getUid()).set(myproduct)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-
-                                                if(task.isSuccessful())
-                                                {
-
-                                                    Intent intent = new Intent(ActivityRentDetails.this, ActivityRent.class);
-                                                    intent.putExtra("cart_flag",1);
-                                                    startActivity(intent);
-                                                    finish();
-
-                                                }
-
-                                                else
-                                                    Toast.makeText(ActivityRentDetails.this, "Failed"+task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-
-                                            }
-
-                                        });
-
-
-
-                            }
-                        }
-                    });
-
-
+                    }
 
 
                 }
 
-            }
-        });
 
-    }
-}
+
+                        }
+                    });
+
+                }
+            }
+//        });
+//    }
+//}

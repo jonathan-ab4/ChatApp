@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -29,8 +30,7 @@ public class CartFragment extends Fragment {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
     public  CartAdapter adapter;
-
-
+    ListenerRegistration registration;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,10 +38,6 @@ public class CartFragment extends Fragment {
 
 
         binding = FragmentCartBinding.inflate(inflater,container,false);
-
-
-
-
         return binding.getRoot();
     }
 
@@ -50,14 +46,14 @@ public class CartFragment extends Fragment {
         super.onStart();
 
 
-        db.collection("cart").document(mAuth.getCurrentUser().getUid())
+        registration = db.collection("cart").document(mAuth.getCurrentUser().getUid())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
                     public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
 
                         if (value.exists()) {
 
-                            myproduct = (ArrayList<Map<String, String>>) value.getData().get("myproduct");
+                            myproduct = (ArrayList<Map<String, String>>) value.getData().get("myproducts");
                             recyclerview();
 
                         }
@@ -74,5 +70,13 @@ public class CartFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
       //  layoutManager.setStackFromEnd(true);
         binding.recyclerView.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void onDestroy() {
+
+        registration.remove();
+        super.onDestroy();
+
     }
 }
