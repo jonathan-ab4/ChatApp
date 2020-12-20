@@ -59,11 +59,6 @@ public class AdminFragment extends Fragment {
 //            }
 //        });
 
-
-
-
-
-
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -72,6 +67,9 @@ public class AdminFragment extends Fragment {
                 {
 
                     users = task.getResult().getDocuments();
+
+
+
 
 
                     for(int i =0;i<users.size();i++)
@@ -94,6 +92,7 @@ public class AdminFragment extends Fragment {
                             Map<String, Object> temp = new HashMap<>();
                             temp.put("name", users.get(i).getData().get("name"));
                             temp.put("email", users.get(i).getData().get("email"));
+                            temp.put("uid",users.get(i).getData().get("uid"));
                             temp.put("myproducts", tempList);
 
                             userlist.add(temp);
@@ -167,8 +166,12 @@ public class AdminFragment extends Fragment {
 
                         pdt1 = (ArrayList<Map<String, String>>) userlist.get(position).get("myproducts");
 
+
+
+
                         Intent appIntent = new Intent(getContext(),ActivityApproval.class);
                         appIntent.putExtra("productlist",pdt1);
+                        appIntent.putExtra("uid", (String) userlist.get(position).get("uid"));
 
                         startActivity(appIntent);
 

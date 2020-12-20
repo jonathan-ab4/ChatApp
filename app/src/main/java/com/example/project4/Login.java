@@ -134,6 +134,7 @@ public class Login extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if (user != null) {
+                                users.put("uid",user.getUid());
                                 users.put("name", user.getDisplayName());
                                 users.put("email", user.getEmail());
                                 users.put("profile_url", Objects.requireNonNull(user.getPhotoUrl()).toString());
