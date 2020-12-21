@@ -2,11 +2,10 @@ package com.example.project4;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AppData {
+public class serial implements Serializable {
 
-    String uname, purl;
     public List<DocumentSnapshot> users;
-
 }

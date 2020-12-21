@@ -2,6 +2,7 @@ package com.example.project4;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,13 +35,18 @@ import java.util.Map;
 public class AdminFragment extends Fragment {
 
     ArrayList<Map<String,Object>> userlist = new ArrayList<>();
+
     FragmentAdminBinding fbinding;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     RecyclerView.Adapter<AdminFragment.ViewHolder> adminAdapter;
     List<DocumentSnapshot> users = new ArrayList<>();
+//    serial serial1 = new serial();
+    AppData appData = new AppData();
     ArrayList<Map<String,String>> pdt = new ArrayList<>();
     String item_name, item_price, item_img, item_desc;
     ArrayList<Map<String,String>> pdt1 = new ArrayList<>();
+    ArrayList<List<DocumentSnapshot>> mainlist = new ArrayList<>();
+    ArrayList<Integer> pos = new ArrayList<>();
 
 
 
@@ -46,6 +55,7 @@ public class AdminFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         fbinding = FragmentAdminBinding.inflate(LayoutInflater.from(getContext()),container,false);
+
 
 
 //        db.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -68,36 +78,35 @@ public class AdminFragment extends Fragment {
 
                     users = task.getResult().getDocuments();
 
-
-
-
+                    //mainlist.add((task.getResult().getDocuments()));
 
                     for(int i =0;i<users.size();i++)
                     {
-                        pdt = (ArrayList<Map<String, String>>) users.get(i).getData().get("myproducts");
-                        int s = pdt.size();
 
-                        ArrayList<Map<String, String>> tempList = new ArrayList<>();
+//                        pdt = (ArrayList<Map<String, String>>) users.get(i).getData().get("myproducts");
+//                        int s = pdt.size();
+//
+//                        ArrayList<Map<String, String>> tempList = new ArrayList<>();
+//
+//                        for(int j=0;j<s;j++) {
+//                            if (pdt.get(j).get("status").equals("0")) {
+//
+////                                userlist.add(users.get(i).getData());
+//
+//                                pos.add(j);
+//
+//                                tempList.add(pdt.get(j));
+//
+//                            }
+//                        }
 
-                        for(int j=0;j<s;j++) {
-                            if (pdt.get(j).get("status").equals("0")) {
-
-//                                userlist.add(users.get(i).getData());
-
-                                tempList.add(pdt.get(j));
-
-                            }
-                        }
-
-                            Map<String, Object> temp = new HashMap<>();
-                            temp.put("name", users.get(i).getData().get("name"));
-                            temp.put("email", users.get(i).getData().get("email"));
-                            temp.put("uid",users.get(i).getData().get("uid"));
-                            temp.put("myproducts", tempList);
-
-                            userlist.add(temp);
-
-
+//                            Map<String, Object> temp = new HashMap<>();
+//                            temp.put("name", users.get(i).getData().get("name"));
+//                            temp.put("email", users.get(i).getData().get("email"));
+//                            temp.put("uid",users.get(i).getData().get("uid"));
+//                            temp.put("myproducts", users.get(i).getData().get("myproducts"));
+//
+//                            userlist.add(temp);
 
 
 
@@ -143,6 +152,11 @@ public class AdminFragment extends Fragment {
 
         });
 
+
+
+        fbinding.adminRecycler.setAdapter(adminAdapter);
+        fbinding.adminRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
         adminAdapter = new RecyclerView.Adapter<ViewHolder>() {
             @NonNull
             @Override
@@ -154,28 +168,22 @@ public class AdminFragment extends Fragment {
             public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
 
-                holder.binding.name.setText((CharSequence) userlist.get(position).get("name"));
-                holder.binding.email.setText((CharSequence) userlist.get(position).get("email"));
+                holder.binding.name.setText((CharSequence) users.get(position).getData().get("name"));
+                holder.binding.email.setText((CharSequence) users.get(position).getData().get("email"));
 
                 holder.binding.userlayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
-
+                        appData.users = users;
+                        EventBus.getDefault().postSticky(appData);
 
 
                         pdt1 = (ArrayList<Map<String, String>>) userlist.get(position).get("myproducts");
-
-
-
-
                         Intent appIntent = new Intent(getContext(),ActivityApproval.class);
-                        appIntent.putExtra("productlist",pdt1);
+//                        appIntent.putExtra("productlist", (Serializable) serial1.users);
                         appIntent.putExtra("uid", (String) userlist.get(position).get("uid"));
-
                         startActivity(appIntent);
-
-
 
                     }
                 });
@@ -185,12 +193,9 @@ public class AdminFragment extends Fragment {
 
             @Override
             public int getItemCount() {
-                return userlist.size();
+                return users.size();
             }
         };
-
-        fbinding.adminRecycler.setAdapter(adminAdapter);
-        fbinding.adminRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
         return fbinding.getRoot();
