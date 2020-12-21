@@ -179,10 +179,10 @@ public class AdminFragment extends Fragment {
                         EventBus.getDefault().postSticky(appData);
 
 
-                        pdt1 = (ArrayList<Map<String, String>>) userlist.get(position).get("myproducts");
+//                        pdt1 = (ArrayList<Map<String, String>>) userlist.get(position).get("myproducts");
                         Intent appIntent = new Intent(getContext(),ActivityApproval.class);
 //                        appIntent.putExtra("productlist", (Serializable) serial1.users);
-                        appIntent.putExtra("uid", (String) userlist.get(position).get("uid"));
+                        appIntent.putExtra("uid", (String) users.get(position).getData().get("uid"));
                         startActivity(appIntent);
 
                     }

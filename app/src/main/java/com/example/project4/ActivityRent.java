@@ -69,7 +69,7 @@ public class ActivityRent extends AppCompatActivity {
                         selectedFragment = new CartFragment();
                         break;
                      case R.id.page_3:
-                        selectedFragment = new AdminFragment();
+                        selectedFragment = new NewAdminFrag();
                         break;
 //
 //                    case R.id.page_4:

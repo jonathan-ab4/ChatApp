@@ -45,7 +45,7 @@ public class ActivityApproval extends AppCompatActivity {
     List<DocumentSnapshot> pdt1;
     ArrayList<Map<String,Object>> mainlist;
     ArrayList<Integer> pos;
-    ArrayList<Map<String,String>> pdt2;
+    ArrayList<Map<String,String>> cart = new ArrayList<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     RecyclerView.Adapter<ActivityApproval.ViewHolder> AppAdapter;
 
@@ -67,9 +67,18 @@ public class ActivityApproval extends AppCompatActivity {
         binding = ActivityApprovalBinding.inflate(LayoutInflater.from(this));
         setContentView(binding.getRoot());
 
+        uid = getIntent().getStringExtra("uid");
+        for(DocumentSnapshot doc: appData.users){
+            if(doc.getId().equals(uid)){
+                cart = (ArrayList<Map<String, String>>) doc.getData().get("myproducts");
+            }
+        }
+
+
         Intent appIntent = getIntent();
         pdt1 = appData.users;
-        uid = appIntent.getStringExtra("uid");
+
+        Toast.makeText(this, uid, Toast.LENGTH_SHORT).show();
 
         //pos = (ArrayList<Integer>) appIntent.getSerializableExtra("pos");
 
@@ -85,8 +94,7 @@ public class ActivityApproval extends AppCompatActivity {
         approve = layout.findViewById(R.id.approve);
 
 
-        binding.apprRecyclerview.setAdapter(AppAdapter);
-        binding.apprRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+
 
 
         AppAdapter=new RecyclerView.Adapter<ViewHolder>() {
@@ -101,34 +109,15 @@ public class ActivityApproval extends AppCompatActivity {
             @Override
             public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-//                for(int i =0;i<pdt1.size();i++)
-//                {
-//
-//                        pdt2 = (ArrayList<Map<String, String>>) pdt1.get(i).getData().get("myproducts");
-//                        int s = pdt1;
-//
-//                        ArrayList<Map<String, String>> tempList = new ArrayList<>();
-//
-//                        for(int j=0;j<s;j++) {
-//                            if (pdt1.get(j).get("status").equals("0")) {
-//
-////                                userlist.add(users.get(i).getData());
-//
-//                                pos.add(j);
-//
-//                                tempList.add(pdt.get(j));
-//
-//                            }
-////                        }
-                   pdt2 = (ArrayList<Map<String,String>>) pdt1.get(position).getData().get("myproducts");
+
 //
 //
-                if(pdt2.get(position).get("status").equals("0"))
+                if(cart.get(position).get("status").equals("0"))
                 {
                     holder.cbinding.apprRecyclerview.setVisibility(View.VISIBLE);
-                    holder.cbinding.pdtname.setText(pdt2.get(position).get("name"));
-                    holder.cbinding.pdtprice.setText(pdt2.get(position).get("price"));
-                    Glide.with(getApplicationContext()).load(pdt2.get(position).get("image")).into(holder.cbinding.pdtimg);
+                    holder.cbinding.pdtname.setText(cart.get(position).get("name"));
+                    holder.cbinding.pdtprice.setText(cart.get(position).get("price"));
+                    Glide.with(getApplicationContext()).load(cart.get(position).get("image")).into(holder.cbinding.pdtimg);
 
                     holder.cbinding.apprRecyclerview.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -157,8 +146,11 @@ public class ActivityApproval extends AppCompatActivity {
 
 //                                    pdt1.get(position).put("price","Rs"+amount.getText().toString());
 //                                    pdt1.get(position).put("status","1");
+
+                                        cart.get(position).put("price", amount.getText().toString());
+                                        cart.get(position).put("status", "1");
 //
-                                        db.collection("users").document(uid).update("myproducts",pdt1)
+                                        db.collection("users").document(uid).update("myproducts",cart)
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
@@ -216,11 +208,14 @@ public class ActivityApproval extends AppCompatActivity {
 
             @Override
             public int getItemCount() {
-                return pdt2.size();
+                return cart.size();
             }
         };
 
 
+
+        binding.apprRecyclerview.setAdapter(AppAdapter);
+        binding.apprRecyclerview.setLayoutManager(new LinearLayoutManager(this));
 
 
 
